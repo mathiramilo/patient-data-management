@@ -3,11 +3,11 @@ import {
   IconEdit,
   IconChevronDown,
   IconWorldWww,
-  IconClock,
+  IconClock
 } from "@tabler/icons-react"
 
 import { Patient } from "../types"
-import useModal from "../hooks/useModal"
+import useModal from "../store/useModal"
 
 interface PatientCardProps {
   patient: Patient

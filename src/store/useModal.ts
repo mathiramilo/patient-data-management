@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-interface ModalState {
+interface ModalStore {
   isOpen: boolean
   patientId?: string | undefined
   open: () => void
@@ -8,12 +8,12 @@ interface ModalState {
   setPatientId: (id: string) => void
 }
 
-const useModal = create<ModalState>((set) => ({
+const useModal = create<ModalStore>((set) => ({
   isOpen: false,
   patientId: undefined,
   open: () => set({ isOpen: true }),
   close: () => set({ isOpen: false }),
-  setPatientId: (id) => set({ patientId: id }),
+  setPatientId: (id) => set({ patientId: id })
 }))
 
 export default useModal

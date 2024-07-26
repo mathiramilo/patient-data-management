@@ -1,16 +1,22 @@
-import { Patient } from "../types"
+import usePatients from "../store/usePatients"
 import PatientCard from "./PatientCard"
+import Loading from "./Loading"
+import Error from "./Error"
 
-interface PatientsListProps {
-  patients: Patient[]
-}
+function PatientsList() {
+  const { patients, isLoading, error } = usePatients()
 
-function PatientsList({ patients }: PatientsListProps) {
   return (
-    <div className="mb-24 flex flex-1 flex-col gap-3 lg:mb-0 lg:grid lg:grid-cols-2">
-      {patients.map((patient) => (
-        <PatientCard patient={patient} key={patient.id} />
-      ))}
+    <div className="mb-24 flex min-h-[65vh] flex-1 flex-col gap-3 lg:mb-0 lg:grid lg:min-h-[85%] lg:grid-cols-2">
+      {isLoading ? (
+        <Loading />
+      ) : error ? (
+        <Error message={error} />
+      ) : (
+        patients.map((patient) => (
+          <PatientCard patient={patient} key={patient.id} />
+        ))
+      )}
     </div>
   )
 }
