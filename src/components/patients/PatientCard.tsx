@@ -1,5 +1,6 @@
 import { useState } from "react"
 import clsx from "clsx"
+import { animated, useSpring } from "@react-spring/web"
 import {
   IconEdit,
   IconChevronDown,
@@ -24,12 +25,19 @@ function PatientCard({ patient }: PatientCardProps) {
     open()
   }
 
+  const springs = useSpring({
+    from: { opacity: 0, transform: "translateY(10px)" },
+    to: { opacity: 1, transform: "translateY(0)" },
+    config: { duration: 200 }
+  })
+
   return (
-    <div
+    <animated.div
       className={clsx(
         isExpanded ? "max-h-[1200px]" : "max-h-[107px]",
         "flex flex-col gap-7 overflow-hidden border-[1px] border-white/5 bg-white/[0.01] p-5 transition-all"
       )}
+      style={springs}
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
@@ -94,7 +102,7 @@ function PatientCard({ patient }: PatientCardProps) {
           </span>
         </div>
       </div>
-    </div>
+    </animated.div>
   )
 }
 
