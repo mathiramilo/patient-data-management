@@ -1,7 +1,7 @@
-import usePatients from "../store/usePatients"
-import PatientCard from "./PatientCard"
-import Loading from "./Loading"
-import Error from "./Error"
+import usePatients from "../../store/usePatients"
+import PatientCard from "../patients/PatientCard"
+import Loading from "../ui/Loading"
+import Error from "../ui/Error"
 
 function PatientsList() {
   const { patients, isLoading, error } = usePatients()

@@ -5,7 +5,8 @@ import {
   AddPatientButton,
   PatientsList,
   Header,
-  Sidebar
+  Sidebar,
+  NotificationsContainer
 } from "./components"
 import usePatients from "./store/usePatients"
 
@@ -27,6 +28,7 @@ function App() {
         </div>
         <AddPatientButton />
       </section>
+      <NotificationsContainer />
     </main>
   )
 }

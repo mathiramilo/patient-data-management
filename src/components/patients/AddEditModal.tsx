@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react"
 import { IconCamera, IconDeviceFloppy, IconUserPlus } from "@tabler/icons-react"
 import { z } from "zod"
 
-import { FileInput, Patient } from "../types"
-import useModal from "../store/useModal"
-import usePatients from "../store/usePatients"
-import { createObjectURLFromPath } from "../lib/createObjectURLFromPath"
+import { FileInput, Patient } from "../../types"
+import useModal from "../../store/useModal"
+import usePatients from "../../store/usePatients"
+import useNotifications from "../../store/useNotifications"
+import { createObjectURLFromPath } from "../../lib/createObjectURLFromPath"
 
 const FormSchema = z.object({
   name: z
@@ -21,7 +22,7 @@ const FormSchema = z.object({
       invalid_type_error: "Description must be a string"
     })
     .min(10, { message: "Description must be at least 20 characters long" })
-    .max(500, { message: "Description must be at most 500 characters long" }),
+    .max(1000, { message: "Description must be at most 1000 characters long" }),
   website: z
     .string()
     .url({ message: "Website must be a valid URL" })
@@ -40,6 +41,7 @@ function AddEditModal() {
 
   const { isOpen, patientId, close } = useModal()
   const { patients, addPatient, updatePatient } = usePatients()
+  const { addNotification } = useNotifications()
 
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -88,9 +90,11 @@ function AddEditModal() {
     if (isEdit) {
       // Update the patient
       updatePatient(patientId, payload)
+      addNotification.success("Patient data updated successfully")
     } else {
       // Add the patient
       addPatient(payload)
+      addNotification.success("Patient added successfully")
     }
 
     setAvatar({ file: null, url: "" })
@@ -110,6 +114,7 @@ function AddEditModal() {
   // Executed when the modal is closed
   const handleClose = () => {
     setAvatar({ file: null, url: "" })
+    setFormErrors({})
     formRef.current?.reset()
     close()
   }

@@ -1,6 +1,6 @@
 import { IconUserPlus } from "@tabler/icons-react"
 
-import useModal from "../store/useModal"
+import useModal from "../../store/useModal"
 
 function Sidebar() {
   const { open, setPatientId } = useModal()

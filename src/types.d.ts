@@ -7,6 +7,12 @@ export type Patient = {
   id: string
 }
 
+type Notification = {
+  id: string
+  message: string
+  type: "info" | "success" | "warning" | "error"
+}
+
 export type FileInput = {
   file: File | null
   url: string

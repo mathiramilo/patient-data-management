@@ -6,8 +6,8 @@ import {
   IconClock
 } from "@tabler/icons-react"
 
-import { Patient } from "../types"
-import useModal from "../store/useModal"
+import { Patient } from "../../types"
+import useModal from "../../store/useModal"
 
 interface PatientCardProps {
   patient: Patient
