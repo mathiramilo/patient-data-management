@@ -1,4 +1,5 @@
 import { useState } from "react"
+import clsx from "clsx"
 import {
   IconEdit,
   IconChevronDown,
@@ -25,9 +26,10 @@ function PatientCard({ patient }: PatientCardProps) {
 
   return (
     <div
-      className={`${
-        isExpanded ? "max-h-[1200px]" : "max-h-[107px]"
-      } flex flex-col gap-7 overflow-hidden border-[1px] border-white/5 bg-white/[0.01] p-5 transition-all`}
+      className={clsx(
+        isExpanded ? "max-h-[1200px]" : "max-h-[107px]",
+        "flex flex-col gap-7 overflow-hidden border-[1px] border-white/5 bg-white/[0.01] p-5 transition-all"
+      )}
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
@@ -55,7 +57,10 @@ function PatientCard({ patient }: PatientCardProps) {
             className="rounded-full p-2 active:bg-white/5"
           >
             <IconChevronDown
-              className={`${isExpanded && "-rotate-180"} stroke-lime transition-all`}
+              className={clsx(
+                isExpanded && "-rotate-180",
+                "stroke-lime transition-all"
+              )}
             />
           </button>
         </div>

@@ -5,7 +5,7 @@ function NotificationsContainer() {
   const { notifications } = useNotifications()
 
   return (
-    <div className="notifications-container fixed top-6 flex flex-col-reverse gap-2">
+    <div className="fixed top-6 flex flex-col-reverse gap-2">
       {notifications.map((notification) => (
         <Notification key={notification.id} notification={notification} />
       ))}

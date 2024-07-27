@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid"
 
 import { Notification } from "../types"
 
-type NotificationsStore = {
+interface NotificationsStore {
   notifications: Notification[]
   addNotification: {
     info: (message: string) => void

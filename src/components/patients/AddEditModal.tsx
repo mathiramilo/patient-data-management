@@ -1,12 +1,20 @@
 import { useEffect, useRef, useState } from "react"
-import { IconCamera, IconDeviceFloppy, IconUserPlus } from "@tabler/icons-react"
+import { IconDeviceFloppy, IconUserPlus } from "@tabler/icons-react"
 import { z } from "zod"
 
-import { FileInput, Patient } from "../../types"
+import { Patient } from "../../types"
 import useModal from "../../store/useModal"
 import usePatients from "../../store/usePatients"
 import useNotifications from "../../store/useNotifications"
 import { createObjectURLFromPath } from "../../lib/createObjectURLFromPath"
+import Input from "../ui/Input"
+import Textarea from "../ui/Textarea"
+import UploadPhoto from "../ui/UploadPhoto"
+
+type FileInput = {
+  file: File | null
+  url: string
+}
 
 const FormSchema = z.object({
   name: z
@@ -43,10 +51,10 @@ function AddEditModal() {
   const { patients, addPatient, updatePatient } = usePatients()
   const { addNotification } = useNotifications()
 
-  const formRef = useRef<HTMLFormElement>(null)
-
   // If there isn't a patientId, then the user is adding a new patient
   const isEdit = patientId !== undefined
+
+  const formRef = useRef<HTMLFormElement>(null)
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -102,6 +110,7 @@ function AddEditModal() {
     close()
   }
 
+  // Executed when the user selects a file
   const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setAvatar({
@@ -152,101 +161,53 @@ function AddEditModal() {
           {/* Inputs */}
           <div className="flex flex-col gap-4">
             {/* Avatar Photo */}
-            <div className="mb-4">
-              <label
-                htmlFor="avatar"
-                className="group flex w-max cursor-pointer items-center gap-4"
-              >
-                <img
-                  src={
-                    isEdit
-                      ? avatar.url || patientData.avatar
-                      : avatar.url || "/user-placeholder.jpg"
-                  }
-                  alt={isEdit ? patientData.name : "Placeholder Avatar"}
-                  className="h-20 w-20 rounded-full border-2 border-lime"
-                />
-                <div className="flex items-center gap-2">
-                  <IconCamera className="stroke-white" />
-                  <span className="font-medium text-white group-active:underline lg:group-hover:underline">
-                    {isEdit ? "Change Photo" : "Upload a Photo"}
-                  </span>
-                </div>
-              </label>
-              <input
-                onChange={handleChangeFile}
-                type="file"
-                className="hidden"
-                id="avatar"
-                name="avatar"
-              />
-            </div>
+            <UploadPhoto
+              id="avatar"
+              className="mb-4"
+              src={
+                isEdit
+                  ? avatar.url || patientData.avatar
+                  : avatar.url || "/user-placeholder.jpg"
+              }
+              alt={isEdit ? patientData.name : "Placeholder Avatar"}
+              labelText={isEdit ? "Change Photo" : "Upload a Photo"}
+              onFileChange={handleChangeFile}
+              name="avatar"
+            />
 
             {/* Name */}
-            <div>
-              <label
-                htmlFor="name"
-                className="mb-2 block font-medium text-white"
-              >
-                Name *
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                defaultValue={isEdit ? patientData.name : ""}
-                placeholder="Enter the Patient's Name"
-                className="w-full rounded bg-white/[0.02] p-2 text-white focus:outline-none focus:outline-white/5"
-              />
-              {formErrors.name && (
-                <span className="text-sm text-red-500">{formErrors.name}</span>
-              )}
-            </div>
+            <Input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Enter the Patient's Name"
+              defaultValue={isEdit ? patientData.name : ""}
+              required
+              label="Name"
+              {...(formErrors.name && { error: formErrors.name })}
+            />
 
             {/* Description */}
-            <div>
-              <label
-                htmlFor="description"
-                className="mb-2 block font-medium text-white"
-              >
-                Description *
-              </label>
-              <textarea
-                id="description"
-                name="description"
-                defaultValue={isEdit ? patientData.description : ""}
-                placeholder="Write about the Patient"
-                className="h-36 w-full resize-none rounded bg-white/[0.02] p-2 text-white focus:outline-none focus:outline-white/5"
-              ></textarea>
-              {formErrors.description && (
-                <span className="text-sm text-red-500">
-                  {formErrors.description}
-                </span>
-              )}
-            </div>
+            <Textarea
+              id="description"
+              name="description"
+              placeholder="Write about the Patient"
+              defaultValue={isEdit ? patientData.description : ""}
+              required
+              label="Description"
+              {...(formErrors.description && { error: formErrors.description })}
+            />
 
             {/* Website */}
-            <div>
-              <label
-                htmlFor="website"
-                className="mb-2 block font-medium text-white"
-              >
-                Website
-              </label>
-              <input
-                type="text"
-                id="website"
-                name="website"
-                defaultValue={isEdit ? patientData.website : ""}
-                placeholder="Enter the Patient's Website URL"
-                className="w-full rounded bg-white/[0.02] p-2 text-white focus:outline-none focus:outline-white/5"
-              />
-              {formErrors.website && (
-                <span className="text-sm text-red-500">
-                  {formErrors.website}
-                </span>
-              )}
-            </div>
+            <Input
+              type="text"
+              id="website"
+              name="website"
+              placeholder="Enter the Patient's Website URL"
+              defaultValue={isEdit ? patientData.website : ""}
+              label="Website"
+              {...(formErrors.website && { error: formErrors.website })}
+            />
           </div>
 
           {/* Actions */}

@@ -57,7 +57,7 @@ function Notification({ notification }: NotificationProps) {
       onClick={handleRemove}
       className={clsx(
         bgColor(),
-        "notification flex w-72 cursor-pointer items-center gap-2 rounded border-2 border-white/60 p-4 text-black shadow-md"
+        "flex w-72 cursor-pointer items-center gap-2 rounded border-2 border-white/60 p-4 text-black shadow-md"
       )}
       style={springs}
     >
