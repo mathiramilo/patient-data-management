@@ -5,7 +5,7 @@ interface ModalStore {
   patientId?: string | undefined
   open: () => void
   close: () => void
-  setPatientId: (id: string) => void
+  setPatientId: (id: string | undefined) => void
 }
 
 const useModal = create<ModalStore>((set) => ({
