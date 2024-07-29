@@ -72,7 +72,7 @@ function Search() {
   return (
     <>
       <div className="relative mt-10 flex items-center gap-2">
-        {/* Patients Search */}
+        {/* Search Input */}
         <div className="flex items-center gap-2 rounded border-2 border-transparent bg-white/[0.02] p-2 focus-within:border-2 focus-within:border-white/5">
           <label htmlFor="search" className="cursor-text">
             <IconSearch size={20} className="stroke-lime" />
@@ -86,19 +86,21 @@ function Search() {
           />
         </div>
 
-        {/* Sort Patients */}
+        {/* Sort Button */}
         <button
           className="flex items-center justify-center rounded bg-lime p-2 transition-all active:bg-lime/80"
           onClick={() => setOrderByOpen((prev) => !prev)}
         >
           <IconArrowsSort size={20} />
         </button>
-        {/* Select */}
+
+        {/* Select Sort Option */}
         {orderByOpen && (
           <animated.div
             className="divide absolute left-0 right-0 top-12 flex flex-col items-start divide-y divide-white/10 rounded border border-white/5 bg-[#282C3A] p-2 shadow-sm"
             style={springOrderBy}
           >
+            {/* Buttons */}
             {buttons.map((item, index) => (
               <button
                 key={index}

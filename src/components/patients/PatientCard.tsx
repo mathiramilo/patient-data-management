@@ -41,6 +41,7 @@ function PatientCard({ patient }: PatientCardProps) {
     >
       {/* Header */}
       <div className="flex items-center justify-between gap-2">
+        {/* Image, Name & ID */}
         <div className="flex items-center gap-5">
           <img
             src={avatar}

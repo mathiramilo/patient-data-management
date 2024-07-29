@@ -48,19 +48,16 @@ function AddEditModal() {
     website: "",
     avatar: ""
   })
-  // We use this state to store the avatar file and its URL, so we can preview it
   const [avatar, setAvatar] = useState<FileInput>({
     file: null,
     url: ""
   })
-  // Keep track of the form errors
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
   const { isOpen, patientId, close } = useAddEditModal()
   const { patients, addPatient, updatePatient } = usePatients()
   const { addNotification } = useNotifications()
 
-  // If there isn't a patientId, then the user is adding a new patient
   const isEdit = patientId !== undefined
 
   const formRef = useRef<HTMLFormElement>(null)
@@ -69,12 +66,12 @@ function AddEditModal() {
     e.preventDefault()
     const { name, description, website } = patientData
 
-    // We validate the form data
     const parsedFormData = FormSchema.safeParse({
       name,
       description,
       website
     })
+
     if (!parsedFormData.success) {
       const error = parsedFormData.error
       let newErrors = {}
@@ -86,7 +83,6 @@ function AddEditModal() {
       return
     }
 
-    // If the user is editing a patient, we use existing data, otherwise we use the new data
     const payload: Pick<
       Patient,
       "avatar" | "name" | "description" | "website"
@@ -101,11 +97,9 @@ function AddEditModal() {
     }
 
     if (isEdit) {
-      // Update the patient
       updatePatient(patientId, payload)
       addNotification.success("Patient data updated successfully")
     } else {
-      // Add the patient
       addPatient(payload)
       addNotification.success("Patient added successfully")
     }
@@ -122,7 +116,6 @@ function AddEditModal() {
     close()
   }
 
-  // Executed when the user selects a file
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setAvatar({
@@ -131,15 +124,13 @@ function AddEditModal() {
       })
     }
   }
-  // Executed when the user types in an input
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setPatientData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
   }
 
-  // Executed when the modal is closed
-  const handleClose = () => {
+  const handleCancel = () => {
     setAvatar({ file: null, url: "" })
     setFormErrors({})
     setPatientData({
@@ -152,7 +143,6 @@ function AddEditModal() {
     close()
   }
 
-  // When the modal is rendered, we check if the user is editing a patient, so we can find the patient data
   useEffect(() => {
     if (isEdit) {
       const patient = patients.find((patient) => patient.id === patientId)
@@ -246,7 +236,7 @@ function AddEditModal() {
             <span className="text-lg font-bold">Save</span>
           </button>
           <button
-            onClick={handleClose}
+            onClick={handleCancel}
             className="rounded p-3 text-lg font-bold text-lime active:bg-white/5 lg:hover:bg-white/5 lg:active:bg-white/10"
           >
             Cancel
