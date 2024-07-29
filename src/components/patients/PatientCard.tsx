@@ -31,6 +31,8 @@ function PatientCard({ patient }: PatientCardProps) {
     config: { duration: 200 }
   })
 
+  if (!createdAt || !name || !description || !id) return null
+
   return (
     <animated.div
       className={clsx(
