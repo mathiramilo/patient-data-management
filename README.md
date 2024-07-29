@@ -2,6 +2,8 @@
 
 React + Typescript + Vite frontend application that enables users to add, edit and view patient data.
 
+![Screenshot 2024-07-29 052819](https://github.com/user-attachments/assets/c1cd347b-6d55-44f8-9d9d-1f4138afbdbb)
+
 ## Features:
 
 - **View Patients**: Users can view a list of all patients.
