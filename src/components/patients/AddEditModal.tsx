@@ -133,12 +133,6 @@ function AddEditModal() {
   const handleCancel = () => {
     setAvatar({ file: null, url: "" })
     setFormErrors({})
-    setPatientData({
-      name: "",
-      description: "",
-      website: "",
-      avatar: ""
-    })
     formRef.current?.reset()
     close()
   }
