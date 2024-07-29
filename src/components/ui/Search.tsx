@@ -35,7 +35,7 @@ function Search() {
 
   const debouncedSearch = useDebounce(search, 500)
 
-  const { filterPatients } = usePatients()
+  const { filterPatients, patients, filteredPatients } = usePatients()
 
   const handleOrderBy = (field: OrderBy, order: Order) => {
     if (field === orderBy.field && order === orderBy.order)
@@ -52,6 +52,13 @@ function Search() {
       orderBy.order as Order
     )
   }, [debouncedSearch]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (JSON.stringify(filteredPatients) === JSON.stringify(patients)) {
+      setSearch("")
+      setOrderBy({ field: "id", order: "asc" })
+    }
+  }, [filteredPatients, patients])
 
   const springOrderBy = useSpring({
     from: { opacity: 0, transform: "translateY(-10px)" },
