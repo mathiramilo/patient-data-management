@@ -38,6 +38,7 @@ const UploadPhoto: React.FC<UploadPhotoProps> = ({
       </label>
       <input
         type="file"
+        accept="image/*"
         className="hidden"
         id={id}
         onChange={onFileChange}

@@ -69,17 +69,25 @@ const usePatients = create<PatientsStore>((set) => ({
               ? Number(a[orderBy]) > Number(b[orderBy])
                 ? 1
                 : -1
-              : a[orderBy] > b[orderBy]
-                ? 1
-                : -1
+              : orderBy === "name"
+                ? a[orderBy].toLowerCase() > b[orderBy].toLowerCase()
+                  ? 1
+                  : -1
+                : a[orderBy] < b[orderBy]
+                  ? 1
+                  : -1
           } else {
             return orderBy === "id"
               ? Number(a[orderBy]) < Number(b[orderBy])
                 ? 1
                 : -1
-              : a[orderBy] < b[orderBy]
-                ? 1
-                : -1
+              : orderBy === "name"
+                ? a[orderBy].toLowerCase() < b[orderBy].toLowerCase()
+                  ? 1
+                  : -1
+                : a[orderBy] > b[orderBy]
+                  ? 1
+                  : -1
           }
         })
       return { filteredPatients }

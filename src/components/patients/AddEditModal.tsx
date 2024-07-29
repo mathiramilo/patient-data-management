@@ -23,6 +23,7 @@ const FormSchema = z.object({
       required_error: "Name is required",
       invalid_type_error: "Name must be a string"
     })
+    .trim()
     .min(3, { message: "Name must be at least 3 characters long" })
     .max(50, { message: "Name must be at most 50 characters long" }),
   description: z
@@ -30,10 +31,12 @@ const FormSchema = z.object({
       required_error: "Description is required",
       invalid_type_error: "Description must be a string"
     })
+    .trim()
     .min(10, { message: "Description must be at least 20 characters long" })
     .max(1000, { message: "Description must be at most 1000 characters long" }),
   website: z
     .string()
+    .trim()
     .url({ message: "Website must be a valid URL" })
     .or(z.literal(""))
 })
@@ -109,7 +112,12 @@ function AddEditModal() {
 
     setAvatar({ file: null, url: "" })
     setFormErrors({})
-    setPatientData({} as Patient)
+    setPatientData({
+      name: "",
+      description: "",
+      website: "",
+      avatar: ""
+    })
     formRef.current?.reset()
     close()
   }
@@ -134,7 +142,12 @@ function AddEditModal() {
   const handleClose = () => {
     setAvatar({ file: null, url: "" })
     setFormErrors({})
-    setPatientData({} as Patient)
+    setPatientData({
+      name: "",
+      description: "",
+      website: "",
+      avatar: ""
+    })
     formRef.current?.reset()
     close()
   }
