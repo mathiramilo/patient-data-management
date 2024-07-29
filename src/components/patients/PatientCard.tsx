@@ -9,7 +9,7 @@ import {
 } from "@tabler/icons-react"
 
 import { Patient } from "../../types"
-import useModal from "../../store/useModal"
+import useAddEditModal from "../../store/useAddEditModal"
 
 interface PatientCardProps {
   patient: Patient
@@ -17,7 +17,7 @@ interface PatientCardProps {
 
 function PatientCard({ patient }: PatientCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
-  const { open, setPatientId } = useModal()
+  const { open, setPatientId } = useAddEditModal()
   const { createdAt, name, avatar, description, website, id } = patient
 
   const handleOpenEditModal = () => {

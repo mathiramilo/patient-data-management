@@ -1,16 +1,16 @@
 import { useEffect, useRef, useState } from "react"
-import { animated, useSpring } from "@react-spring/web"
 import { IconDeviceFloppy, IconUserPlus } from "@tabler/icons-react"
 import { z } from "zod"
 
 import { Patient } from "../../types"
-import useModal from "../../store/useModal"
+import useAddEditModal from "../../store/useAddEditModal"
 import usePatients from "../../store/usePatients"
 import useNotifications from "../../store/useNotifications"
 import { createObjectURLFromPath } from "../../lib/createObjectURLFromPath"
 import Input from "../ui/Input"
 import Textarea from "../ui/Textarea"
 import UploadPhoto from "../ui/UploadPhoto"
+import Modal from "../ui/Modal"
 
 type FileInput = {
   file: File | null
@@ -39,7 +39,12 @@ const FormSchema = z.object({
 })
 
 function AddEditModal() {
-  const [patientData, setPatientData] = useState({} as Patient)
+  const [patientData, setPatientData] = useState({
+    name: "",
+    description: "",
+    website: "",
+    avatar: ""
+  })
   // We use this state to store the avatar file and its URL, so we can preview it
   const [avatar, setAvatar] = useState<FileInput>({
     file: null,
@@ -48,7 +53,7 @@ function AddEditModal() {
   // Keep track of the form errors
   const [formErrors, setFormErrors] = useState<Record<string, string>>({})
 
-  const { isOpen, patientId, close } = useModal()
+  const { isOpen, patientId, close } = useAddEditModal()
   const { patients, addPatient, updatePatient } = usePatients()
   const { addNotification } = useNotifications()
 
@@ -59,11 +64,7 @@ function AddEditModal() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    const form = e.currentTarget as HTMLFormElement
-    const formData = new FormData(form)
-    const { name, description, website } = Object.fromEntries(
-      formData.entries()
-    )
+    const { name, description, website } = patientData
 
     // We validate the form data
     const parsedFormData = FormSchema.safeParse({
@@ -107,12 +108,14 @@ function AddEditModal() {
     }
 
     setAvatar({ file: null, url: "" })
-    form.reset()
+    setFormErrors({})
+    setPatientData({} as Patient)
+    formRef.current?.reset()
     close()
   }
 
   // Executed when the user selects a file
-  const handleChangeFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setAvatar({
         file: e.target.files[0],
@@ -120,11 +123,18 @@ function AddEditModal() {
       })
     }
   }
+  // Executed when the user types in an input
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setPatientData((prev) => ({ ...prev, [e.target.name]: e.target.value }))
+  }
 
   // Executed when the modal is closed
   const handleClose = () => {
     setAvatar({ file: null, url: "" })
     setFormErrors({})
+    setPatientData({} as Patient)
     formRef.current?.reset()
     close()
   }
@@ -136,120 +146,101 @@ function AddEditModal() {
       if (patient) {
         setPatientData(patient)
       }
+    } else {
+      setPatientData({
+        name: "",
+        description: "",
+        website: "",
+        avatar: ""
+      })
     }
   }, [patientId, patients, isEdit])
 
-  const overlaySpring = useSpring({
-    from: { opacity: 0 },
-    to: { opacity: isOpen ? 1 : 0 },
-    config: { duration: 150 }
-  })
-  const modalSpring = useSpring({
-    from: { opacity: 0, transform: "scale(0.75)" },
-    to: {
-      opacity: isOpen ? 1 : 0,
-      transform: isOpen ? "scale(1)" : "scale(0.75)"
-    },
-    config: { duration: 150 }
-  })
-
-  if (!isOpen) return null
-
   return (
-    <animated.div
-      className="fixed left-0 top-0 z-50 flex h-screen w-screen items-center justify-center bg-white/[0.02] backdrop-blur-lg"
-      style={overlaySpring}
-    >
-      {/* Modal */}
-      <animated.section
-        className="h-screen w-screen bg-darkblue p-5 lg:h-max lg:w-[65%] lg:max-w-[700px] lg:rounded-lg lg:border-[1px] lg:border-white/10 lg:p-10 lg:shadow-2xl"
-        style={modalSpring}
+    <Modal isOpen={isOpen}>
+      {/* Header */}
+      <div className="mb-10 flex items-center gap-4 border-b-[1px] border-white/10 pb-3">
+        <IconUserPlus size={42} className="stroke-lime" />
+        <h2 className="text-2xl font-bold text-white">
+          {isEdit ? "Edit Patient's Data" : "Add New Patient"}
+        </h2>
+      </div>
+
+      {/* Form */}
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        className="flex h-[90%] flex-col justify-between gap-10 lg:h-max"
       >
-        {/* Header */}
-        <div className="mb-10 flex items-center gap-4 border-b-[1px] border-white/10 pb-3">
-          <IconUserPlus size={42} className="stroke-lime" />
-          <h2 className="text-2xl font-bold text-white">
-            {isEdit ? "Edit Patient's Data" : "Add New Patient"}
-          </h2>
+        {/* Inputs */}
+        <div className="flex flex-col gap-4">
+          {/* Avatar Photo */}
+          <UploadPhoto
+            id="avatar"
+            className="mb-4"
+            src={avatar.url || patientData.avatar || "/user-placeholder.jpg"}
+            alt={isEdit ? patientData.name : "Placeholder Avatar"}
+            labelText={isEdit ? "Change Photo" : "Upload a Photo"}
+            onFileChange={handleFileChange}
+            name="avatar"
+          />
+
+          {/* Name */}
+          <Input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter the Patient's Name"
+            value={patientData.name}
+            onChange={handleInputChange}
+            required
+            label="Name"
+            {...(formErrors.name && { error: formErrors.name })}
+          />
+
+          {/* Description */}
+          <Textarea
+            id="description"
+            name="description"
+            placeholder="Write about the Patient"
+            value={patientData.description}
+            onChange={handleInputChange}
+            required
+            label="Description"
+            {...(formErrors.description && { error: formErrors.description })}
+          />
+
+          {/* Website */}
+          <Input
+            type="text"
+            id="website"
+            name="website"
+            placeholder="Enter the Patient's Website URL"
+            value={patientData.website}
+            onChange={handleInputChange}
+            label="Website"
+            {...(formErrors.website && { error: formErrors.website })}
+          />
         </div>
 
-        {/* Form */}
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          className="flex h-[90%] flex-col justify-between gap-10 lg:h-max"
-        >
-          {/* Inputs */}
-          <div className="flex flex-col gap-4">
-            {/* Avatar Photo */}
-            <UploadPhoto
-              id="avatar"
-              className="mb-4"
-              src={
-                isEdit
-                  ? avatar.url || patientData.avatar
-                  : avatar.url || "/user-placeholder.jpg"
-              }
-              alt={isEdit ? patientData.name : "Placeholder Avatar"}
-              labelText={isEdit ? "Change Photo" : "Upload a Photo"}
-              onFileChange={handleChangeFile}
-              name="avatar"
-            />
-
-            {/* Name */}
-            <Input
-              type="text"
-              id="name"
-              name="name"
-              placeholder="Enter the Patient's Name"
-              defaultValue={isEdit ? patientData.name : ""}
-              required
-              label="Name"
-              {...(formErrors.name && { error: formErrors.name })}
-            />
-
-            {/* Description */}
-            <Textarea
-              id="description"
-              name="description"
-              placeholder="Write about the Patient"
-              defaultValue={isEdit ? patientData.description : ""}
-              required
-              label="Description"
-              {...(formErrors.description && { error: formErrors.description })}
-            />
-
-            {/* Website */}
-            <Input
-              type="text"
-              id="website"
-              name="website"
-              placeholder="Enter the Patient's Website URL"
-              defaultValue={isEdit ? patientData.website : ""}
-              label="Website"
-              {...(formErrors.website && { error: formErrors.website })}
-            />
-          </div>
-
-          {/* Actions */}
-          <div className="flex flex-col gap-2">
-            <button
-              type="submit"
-              className="flex items-center justify-center gap-1 rounded bg-lime p-2 transition-all active:bg-lime/80 lg:hover:shadow-lg lg:hover:shadow-lime/25"
-            >
-              <IconDeviceFloppy size={36} className="stroke-black" />
-              <span className="text-lg font-bold">Save</span>
-            </button>
-            <button
-              onClick={handleClose}
-              className="rounded p-3 text-lg font-bold text-lime active:bg-white/5 lg:hover:bg-white/5 lg:active:bg-white/10"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </animated.section>
-    </animated.div>
+        {/* Actions */}
+        <div className="flex flex-col gap-2">
+          <button
+            type="submit"
+            className="flex items-center justify-center gap-1 rounded bg-lime p-2 transition-all active:bg-lime/80 lg:hover:shadow-lg lg:hover:shadow-lime/25"
+          >
+            <IconDeviceFloppy size={36} className="stroke-black" />
+            <span className="text-lg font-bold">Save</span>
+          </button>
+          <button
+            onClick={handleClose}
+            className="rounded p-3 text-lg font-bold text-lime active:bg-white/5 lg:hover:bg-white/5 lg:active:bg-white/10"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </Modal>
   )
 }
 

@@ -7,6 +7,9 @@ export type Patient = {
   id: string
 }
 
+export type OrderBy = "id" | "name" | "createdAt"
+export type Order = "asc" | "desc"
+
 export type Notification = {
   id: string
   message: string

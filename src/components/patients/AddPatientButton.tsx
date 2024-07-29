@@ -1,6 +1,6 @@
 import { IconUserPlus } from "@tabler/icons-react"
 
-import useModal from "../../store/useModal"
+import useModal from "../../store/useAddEditModal"
 
 function AddPatientButton() {
   const { open, setPatientId } = useModal()

@@ -1,6 +1,6 @@
 import { create } from "zustand"
 
-interface ModalStore {
+interface AddEditModalStore {
   isOpen: boolean
   patientId?: string | undefined
   open: () => void
@@ -8,7 +8,7 @@ interface ModalStore {
   setPatientId: (id: string | undefined) => void
 }
 
-const useModal = create<ModalStore>((set) => ({
+const useAddEditModal = create<AddEditModalStore>((set) => ({
   isOpen: false,
   patientId: undefined,
   open: () => set({ isOpen: true }),
@@ -16,4 +16,4 @@ const useModal = create<ModalStore>((set) => ({
   setPatientId: (id) => set({ patientId: id })
 }))
 
-export default useModal
+export default useAddEditModal
